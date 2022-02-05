@@ -1,0 +1,15 @@
+﻿
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <NoWarn>NU1701</NoWarn>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>innx_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTK.GLControl" Version="3.1.0" />
+  </ItemGroup>
+</Project>
