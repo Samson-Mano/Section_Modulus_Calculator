@@ -11,6 +11,7 @@ namespace Section_Modulus_Calculator.opentk_control.shader_compiler
         public enum shader_type
         {
             br_shader,
+            dr_shader,
             txt_shader
         }
 
@@ -40,7 +41,6 @@ namespace Section_Modulus_Calculator.opentk_control.shader_compiler
                 "gl_Position = gTranslation * vec4(gScale * aPosition, 1.0);\r\n" +
             "}";
         }
-
         #endregion
 
         #region "Fragment shaders"
@@ -56,8 +56,6 @@ namespace Section_Modulus_Calculator.opentk_control.shader_compiler
                 "f_Color = v_Color;\r\n" +
                 "}";
         }
-
-
         #endregion
 
         public shader_control()

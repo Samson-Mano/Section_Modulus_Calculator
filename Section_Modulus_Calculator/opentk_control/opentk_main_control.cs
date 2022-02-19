@@ -17,47 +17,40 @@ using Section_Modulus_Calculator.global_variables;
 
 namespace Section_Modulus_Calculator.opentk_control
 {
-   public class opentk_main_control
+    public class opentk_main_control
     {
         // variable stores all the shader information
         private shader_control all_shaders = new shader_control();
         // variable to control the boundary rectangle
         private boundary_rectangle_store boundary_rect = new boundary_rectangle_store(false, null);
         // Shader variable
-        private Shader _shader;
-        // Drawing area control
-        private drawing_area_control _drawing_area_details = new drawing_area_control(500, 500);
-        // scale to control the units of drawing area
-        private float _primary_scale = 1.0f;
-        // zoom scale
-        private float _zm_scale = 1.0f;
-        // Translation details
-        private Vector3 _current_translation = new Vector3(0.0f, 0.0f, 0.0f);
-        private Vector3 _previous_translation = new Vector3(0.0f, 0.0f, 0.0f);
+        // Boundary shader
+        private Shader _br_shader;
+        // Drawing shader
+        private Shader _dr_shader;
 
-        public Vector3 previous_translation { get { return this._previous_translation; } }
-
-        public drawing_area_control drawing_area_details { get { return this._drawing_area_details; } }
+        // Imported drawing scale
+        private float _dr_d_scale = 1.0f;
 
         public opentk_main_control()
         {
             // main constructor
             // Set the Background color 
-            // Color clr_bg = gvariables_static.glcontrol_background_color;
-            //GL.ClearColor((float)(clr_bg.R/255), 
-            //    (float)(clr_bg.G/255), 
-            //    (float)(clr_bg.B/255), 
-            //    (float)(clr_bg.A/255));
+            Color clr_bg = gvariables_static.glcontrol_background_color;
+            GL.ClearColor(((float)clr_bg.R / 255.0f),
+                ((float)clr_bg.G / 255.0f),
+                ((float)clr_bg.B / 255.0f),
+                ((float)clr_bg.A / 255.0f));
 
-            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-            // create the shader
-            this._shader = new Shader(all_shaders.get_vertex_shader(shader_control.shader_type.br_shader),
+            // create the shaders
+            this._br_shader = new Shader(all_shaders.get_vertex_shader(shader_control.shader_type.br_shader),
                  all_shaders.get_fragment_shader(shader_control.shader_type.br_shader));
-            this._shader.Use();
+
+            this._dr_shader = new Shader(all_shaders.get_vertex_shader(shader_control.shader_type.br_shader),
+                 all_shaders.get_fragment_shader(shader_control.shader_type.br_shader));
 
             // create the boundary
-            boundary_rect = new boundary_rectangle_store(true, this._shader);
+            boundary_rect = new boundary_rectangle_store(true, this._br_shader);
         }
 
         public void paint_opengl_control_background()
@@ -66,72 +59,76 @@ namespace Section_Modulus_Calculator.opentk_control
             // Vertex Buffer (Buffer memory in GPU VRAM)
             // Shader (program which runs on GPU to paint in the screen)
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            // Bind the shader
-            _shader.Use();
-
             // paint the boundary border
             boundary_rect.paint_boundary_rectangle();
         }
 
+        public void set_opengl_shader(int s_type)
+        {
+            // Bind the shader
+            if (s_type == 1)
+            {
+                _br_shader.Use();
+            }
+            else if (s_type == 2)
+            {
+                _dr_shader.Use();
+            }
+        }
+
+
         public void update_drawing_area_size(int width, int height)
         {
             // update the drawing area size
-            this._drawing_area_details = new drawing_area_control(width, height);
+            this._br_shader.update_shader.update_primary_scale(this._br_shader, width, height);
+            this._dr_shader.update_shader.update_primary_scale(this._dr_shader, width, height);
+
+            // Update the drawing scale and translation
+            update_drawing_scale_and_translation(this._dr_d_scale, 0.0f, 0.0f,false);
 
             // Update the graphics drawing area
-            GL.Viewport(this._drawing_area_details.drawing_area_center_x,
-                this._drawing_area_details.drawing_areas_center_y,
-                this._drawing_area_details.max_drawing_area_size,
-                this._drawing_area_details.max_drawing_area_size);     // Use all of the glControl painting area
+            GL.Viewport(this._br_shader.update_shader.drawing_area_details.drawing_area_center_x,
+                this._br_shader.update_shader.drawing_area_details.drawing_areas_center_y,
+                this._br_shader.update_shader.drawing_area_details.max_drawing_area_size,
+                this._br_shader.update_shader.drawing_area_details.max_drawing_area_size);
 
-            this._primary_scale = this._drawing_area_details.norm_drawing_area_min;
-
-
-            _shader.SetFloat("gScale", this._primary_scale);
         }
 
-
-        #region "Zoom and Pan operation of openGL control"
-        public void scale_intelli_zoom_Transform(float zm, float tx, float ty)
+        public void update_drawing_scale_and_translation(float d_scale, float t_trans_x, float t_trans_y,bool set_origin)
         {
-            this._zm_scale = zm;
+            // Update the drawing size
+            this._dr_d_scale = d_scale;
+    
+            this._dr_shader.update_shader.update_scale_and_orgintranslation(this._dr_shader,d_scale, t_trans_x, t_trans_y, set_origin);
 
-            //update the scale
-            _shader.SetFloat("gScale", (this._zm_scale * this._primary_scale));
-
-            translate_Transform(tx, ty);
-            save_translate_transform();
         }
 
-        public void scale_Transform(float zm)
+        public void intelli_zoom_operation(double e_Delta, int e_X, int e_Y)
         {
-            this._zm_scale = zm;
-
-            //update the scale
-            _shader.SetFloat("gScale", (this._zm_scale * this._primary_scale));
+            // Intelli zoom all the vertex shaders
+            this._br_shader.update_shader.intelli_zoom(this._br_shader, e_Delta, e_X, e_Y);
+            this._dr_shader.update_shader.intelli_zoom(this._dr_shader, e_Delta, e_X, e_Y);
         }
 
-        public void translate_Transform(float trans_x, float trans_y)
+        public void pan_operation(float et_X, float et_Y)
         {
-            // 2D Translatoin
-            _current_translation = new Vector3(trans_x + this._previous_translation.X,
-                trans_y + this._previous_translation.Y,
-                0.0f + this._previous_translation.Z);
-
-            Matrix4 current_transformation = new Matrix4(1.0f, 0.0f, 0.0f, _current_translation.X,
-                0.0f, 1.0f, 0.0f, _current_translation.Y,
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);
-
-            _shader.SetMatrix4("gTranslation", current_transformation);
+            // Pan the vertex shader
+            this._br_shader.update_shader.pan_operation(this._br_shader, et_X, et_Y);
+            this._dr_shader.update_shader.pan_operation(this._dr_shader, et_X, et_Y);
         }
 
-        public void save_translate_transform()
+        public void pan_operation_complete()
         {
-            // save the final translation
-            _previous_translation = _current_translation;
+            // End the pan operation saving translate
+            this._br_shader.update_shader.save_translate_transform();
+            this._dr_shader.update_shader.save_translate_transform();
         }
-        #endregion
+
+        public void zoom_to_fit(ref GLControl this_Gcntrl)
+        {
+            // Zoom to fit the vertex shader
+            this._br_shader.update_shader.zoom_to_fit_operation(this._br_shader, ref this_Gcntrl);
+            this._dr_shader.update_shader.zoom_to_fit_operation(this._dr_shader, ref this_Gcntrl);
+        }
     }
 }

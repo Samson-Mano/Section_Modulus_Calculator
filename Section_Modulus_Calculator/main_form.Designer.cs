@@ -29,7 +29,6 @@ namespace Section_Modulus_Calculator
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(main_form));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel_zoom_value = new System.Windows.Forms.ToolStripStatusLabel();
@@ -45,7 +44,6 @@ namespace Section_Modulus_Calculator
             this.button_referenceaxis = new System.Windows.Forms.Button();
             this.button_calculate = new System.Windows.Forms.Button();
             this.richTextBox_result = new System.Windows.Forms.RichTextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -185,10 +183,6 @@ namespace Section_Modulus_Calculator
     "XXXXXXXXXXXX\nXX\nXX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXX\nXX\nXX\nXX";
             this.richTextBox_result.WordWrap = false;
             // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // main_form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -233,6 +227,5 @@ namespace Section_Modulus_Calculator
         private System.Windows.Forms.RichTextBox richTextBox_result;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_zoom_value;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_sidepanel_coord;
-        private System.Windows.Forms.Timer timer1;
     }
 }

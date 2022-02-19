@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +16,15 @@ using OpenTK.Input;
 // This app class structure
 using Section_Modulus_Calculator.opentk_control;
 using Section_Modulus_Calculator.global_variables;
+using Section_Modulus_Calculator.txt_input_reader;
+using Section_Modulus_Calculator.drawing_objects_store;
 
 namespace Section_Modulus_Calculator
 {
     public partial class main_form : Form
     {
+        public geometry_store geom_obj { get; private set; }
+
         // Variables to control openTK GLControl
         // glControl wrapper class
         private opentk_main_control g_control;
@@ -30,10 +35,7 @@ namespace Section_Modulus_Calculator
         // Cursor point on the GLControl
         private PointF click_pt;
 
-        // Temporary variables to initiate the zoom to fit animation
-        private float param_t = 0.0f;
-        private float temp_zm = 1.0f;
-        private float temp_tx, temp_ty;
+
 
         public main_form()
         {
@@ -44,6 +46,7 @@ namespace Section_Modulus_Calculator
         private void main_form_Load(object sender, EventArgs e)
         {
             form_size_control();
+            geom_obj = new geometry_store();
         }
 
         private void main_form_SizeChanged(object sender, EventArgs e)
@@ -77,8 +80,34 @@ namespace Section_Modulus_Calculator
         private void button_import_Click(object sender, EventArgs e)
         {
             // Import Geometry
-            MessageBox.Show("Import");
+            OpenFileDialog ow = new OpenFileDialog();
+            ow.DefaultExt = "*.txt";
+            ow.Filter = "Samson Mano's Varai2D raw data - txt Files (*.txt)|*.txt";
+            ow.ShowDialog();
 
+            if (File.Exists(ow.FileName) == true)
+            {
+                txt_rd_reader txt_rd = new txt_rd_reader(ow.FileName);
+                txt_to_surface_conversion surf_conv = new txt_to_surface_conversion(txt_rd);
+
+                if (surf_conv.all_surface.Count != 0)
+                {
+                    // Re-initialize the geometry
+                    geom_obj = new geometry_store();
+                    geom_obj.add_surface(surf_conv.all_surface);
+                    geom_obj.set_openTK_objects();
+
+                    g_control.update_drawing_scale_and_translation(surf_conv.dr_scale, surf_conv.dr_tx, surf_conv.dr_ty,true);
+
+                    richTextBox_result.Clear();
+                    richTextBox_result.Text = txt_rd.txt_reader_ouput();
+                    richTextBox_result.Text = richTextBox_result.Text + Environment.NewLine;
+                    richTextBox_result.Text = richTextBox_result.Text + "Scale = " + surf_conv.dr_scale.ToString() + Environment.NewLine;
+                    richTextBox_result.Text = richTextBox_result.Text + "Tx = " + surf_conv.dr_tx.ToString() + ", Ty = " + surf_conv.dr_ty.ToString() + Environment.NewLine;
+
+                    glControl_main_panel.Invalidate();
+                }
+            }
         }
 
         private void button_referenceaxis_Click(object sender, EventArgs e)
@@ -123,10 +152,14 @@ namespace Section_Modulus_Calculator
             glControl_main_panel.MakeCurrent();
 
             // Paint the background
+            g_control.set_opengl_shader(1);
+            GL.LineWidth(1.0f);
             g_control.paint_opengl_control_background();
 
             // Display the model using OpenGL
-            // bz_heatmap.paint_heatmap();
+            g_control.set_opengl_shader(2);
+            GL.LineWidth(3.0f);
+            geom_obj.paint_geometry();
 
             // OpenTK windows are what's known as "double-buffered". In essence, the window manages two buffers.
             // One is rendered to while the other is currently displayed by the window.
@@ -172,35 +205,10 @@ namespace Section_Modulus_Calculator
                 // Zoom operation commences
                 glControl_main_panel.Focus();
 
-                // Get the screen pt before scaling
-                PointF screen_pt_b4_scale = g_control.drawing_area_details.get_normalized_screen_pt(e.X, e.Y, zm, g_control.previous_translation.X, g_control.previous_translation.Y);
-
-                if (e.Delta > 0)
-                {
-                    if (zm < 1000)
-                    {
-                        zm = zm + 0.1f;
-                    }
-                }
-                else if (e.Delta < 0)
-                {
-                    if (zm > 0.101)
-                    {
-                        zm = zm - 0.1f;
-                    }
-                }
-
-                // Get the screen pt after scaling
-                PointF screen_pt_a4_scale = g_control.drawing_area_details.get_normalized_screen_pt(e.X, e.Y, zm, g_control.previous_translation.X, g_control.previous_translation.Y);
-
-                float tx = (-1.0f) * zm * 0.5f * (screen_pt_b4_scale.X - screen_pt_a4_scale.X);
-                float ty = (-1.0f) * zm * 0.5f * (screen_pt_b4_scale.Y - screen_pt_a4_scale.Y);
-
-                // Scale the view with intellizoom (translate and scale)
-                g_control.scale_intelli_zoom_Transform(zm, tx, ty);
+                g_control.intelli_zoom_operation(e.Delta, e.X, e.Y);
 
                 // Update the zoom value in tool strip status bar
-                toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(zm * 100))).ToString() + "%";
+                toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(1.0f * 100))).ToString() + "%";
                 // Refresh the painting area
                 glControl_main_panel.Refresh();
             }
@@ -208,21 +216,16 @@ namespace Section_Modulus_Calculator
 
         private void glControl_main_panel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            PointF temp = g_control.drawing_area_details.get_normalized_screen_pt(e.X, e.Y, zm, g_control.previous_translation.X, g_control.previous_translation.Y);
+            //PointF temp = g_control.drawing_area_details.get_normalized_screen_pt(e.X, e.Y, zm, g_control.previous_translation.X, g_control.previous_translation.Y);
 
-            toolStripStatusLabel_sidepanel_coord.Text = temp.X.ToString() + ", " + temp.Y.ToString();
+            //toolStripStatusLabel_sidepanel_coord.Text = temp.X.ToString() + ", " + temp.Y.ToString();
 
             if (gvariables_static.Is_panflg == true)
             {
-                // Pan operation is in progress
-                float tx = (float)((e.X - click_pt.X) / (g_control.drawing_area_details.max_drawing_area_size * 0.5f));
-                float ty = (float)((e.Y - click_pt.Y) / (g_control.drawing_area_details.max_drawing_area_size * 0.5f));
-
-                // Translate the drawing area
-                g_control.translate_Transform(tx, -1.0f * ty);
+                g_control.pan_operation(e.X - click_pt.X, e.Y - click_pt.Y);
 
                 // Refresh the painting area
-                glControl_main_panel.Invalidate();
+                glControl_main_panel.Refresh();
             }
         }
 
@@ -234,7 +237,7 @@ namespace Section_Modulus_Calculator
                 gvariables_static.Is_panflg = false;
 
                 // Pan operation ends (save the translate transformation)
-                g_control.save_translate_transform();
+                g_control.pan_operation_complete();
 
                 // Refresh the painting area
                 glControl_main_panel.Invalidate();
@@ -253,17 +256,9 @@ namespace Section_Modulus_Calculator
                 if (e.KeyCode == Keys.F)
                 {
                     // (Ctrl + F) --> Zoom to fit
-                    // Set view to Fit to View (Default view) 
-                    param_t = 0.0f;
-                    timer1.Interval = 10;
+                    g_control.zoom_to_fit(ref glControl_main_panel);
 
-                    // Save the current zoom and translation values to temporary variables (for the animation)
-                    temp_zm = zm;
-                    temp_tx = g_control.previous_translation.X;
-                    temp_ty = g_control.previous_translation.Y;
-
-                    // start the scale to fit animation
-                    timer1.Start();
+                    toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(zm * 100))).ToString() + "%";
                 }
             }
         }
@@ -272,49 +267,6 @@ namespace Section_Modulus_Calculator
         {
             // Keyup event
             gvariables_static.Is_cntrldown = false;
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            // Scale to Fit animation
-            param_t = param_t + 0.05f;
-
-            if (param_t > 1.0f)
-            {
-                // Set the zoom value to 1.0f
-                zm = 1.0f;
-                // Scale transformation (Scale to fit)
-                g_control.scale_Transform(1.0f);
-
-                param_t = 0.0f;
-                // End the animation
-                timer1.Stop();
-
-                // Translate transformation (Translate back to the original)
-                g_control.translate_Transform(-temp_tx, -temp_ty);
-                g_control.save_translate_transform();
-
-                // Refresh the painting area
-                glControl_main_panel.Invalidate();
-                toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(zm * 100))).ToString() + "%";
-                return;
-            }
-            else
-            {
-                // Animate the translation & zoom value
-                float anim_zm = temp_zm * (1 - param_t) + (1.0f * param_t);
-                float anim_tx = (0.0f * (1 - param_t) - (temp_tx * param_t));
-                float anim_ty = (0.0f * (1 - param_t) - (temp_ty * param_t));
-
-                // Scale transformation intermediate
-                g_control.scale_Transform(anim_zm);
-
-                // Translate transformation intermediate
-                g_control.translate_Transform(anim_tx, anim_ty);
-
-                // Refresh the painting area
-                glControl_main_panel.Invalidate();
-            }
         }
 
         #endregion

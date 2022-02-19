@@ -1,0 +1,100 @@
+        using (StreamReader sreader = File.OpenText(file_name))
+                {
+                    string str_ln = String.Empty;
+                    while ((str_ln = sreader.ReadLine()) != null)
+                    {
+                        // read line by line
+                        if (str_ln.Substring(0, 3) == "[+]")
+                        {
+                            string[] str_elem_type = str_ln.Substring(4).Split(',');
+
+                            // store the number of elements
+                            int n_count = 0;
+                            int.TryParse(str_elem_type[1], out n_count);
+
+                            if (str_elem_type[0] == "End Points")
+                            {
+                                // Read all End points
+                                str_end_pts = new string[n_count];
+                                for (i = 0; i < n_count; i++)
+                                {
+                                    // Add all the end points to string list
+                                    str_end_pts[i] = sreader.ReadLine();
+                                }
+                            }
+                            else if (str_elem_type[0] == "Lines")
+                            {
+                                // Read all Lines
+                                str_lines = new string[n_count];
+                                for (i = 0; i < n_count; i++)
+                                {
+                                    // Add all the lines to string list
+                                    str_lines[i] = sreader.ReadLine();
+                                }
+                            }
+                            else if (str_elem_type[0] == "Arcs")
+                            {
+                                // Read all Arcs
+                                str_arcs = new string[n_count];
+                                for (i = 0; i < n_count; i++)
+                                {
+                                    // Each arc has 3 lines of inputs
+                                    str_arcs[i] = sreader.ReadLine() + ",";
+                                    for (j = 0; j < 2; j++)
+                                    {
+                                        // Add all the arcs to string list
+                                        str_arcs[i] = str_arcs[i] + sreader.ReadLine() + ",";
+                                    }
+                                }
+
+                            }
+                            else if (str_elem_type[0] == "Beziers")
+                            {
+                                // Read all Beziers
+                                str_beziers = new string[n_count];
+                                for (i = 0; i < n_count; i++)
+                                {
+                                    // Each beziers has 1,2 or 3 control points (2 end points)
+                                    string[] str_temp = sreader.ReadLine().Split(",");
+                                    str_beziers[i] = str_temp[0] + ", " + str_temp[1] + ", " + str_temp[2] + ", ";
+                                    int index0 = str_temp[3].IndexOf('@');
+
+                                    int cntrl_count = 0;
+                                    int.TryParse(str_temp[3].Substring(index0 + 1), out cntrl_count);
+
+                                    for (j = 0; j < cntrl_count; j++)
+                                    {
+                                        // Add all the beziers to string list
+                                        str_beziers[i] = str_beziers[i] + sreader.ReadLine() + ",";
+                                    }
+                                }
+
+                            }
+                            else if (str_elem_type[0] == "Surfaces")
+                            {
+                                // Read all surfaces
+                                str_surfaces = new string[n_count];
+                                for (i = 0; i < n_count; i++)
+                                {
+                                    str_surfaces[i] = sreader.ReadLine();
+                                    int index0 = str_surfaces[i].IndexOf('@');
+
+                                    int cntrl_count = 0;
+                                    int.TryParse(str_surfaces[i].Substring(index0 + 1), out cntrl_count);
+
+                                    // remove the last 3 characters
+                                    str_surfaces[i] = str_surfaces[i].Substring(0, str_surfaces[i].Length - 3);
+
+                                    for (j = 0; j < cntrl_count; j++)
+                                    {
+                                        // Add all the beziers to string list
+                                        str_surfaces[i] = str_surfaces[i] + sreader.ReadLine() + ",";
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+

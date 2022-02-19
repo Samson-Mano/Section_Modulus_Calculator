@@ -11,6 +11,7 @@ namespace Section_Modulus_Calculator.opentk_control.opentk_bgdraw
     {
         private int _drawing_area_width;
         private int _drawing_area_height;
+        private int _margin = 40;
 
         public int drawing_area_width { get { return this._drawing_area_width; } }
 
@@ -24,7 +25,7 @@ namespace Section_Modulus_Calculator.opentk_control.opentk_bgdraw
 
         public int drawing_areas_center_y { get { return (int)((this._drawing_area_height - max_drawing_area_size) * 0.5f); } }
 
-        public float norm_drawing_area_min { get { return ((float)(min_drawing_area_size - 40)) / (float)max_drawing_area_size; } } // Normalized minimum canvas size
+        public float norm_drawing_area_min { get { return ((float)(min_drawing_area_size - _margin)) / (float)max_drawing_area_size; } } // Normalized minimum canvas size
 
         public float drawing_area_x_norm_max { get { return (float)this._drawing_area_width / (float)max_drawing_area_size; } } // Normalized canvas width (as seen in screen)
 
@@ -42,8 +43,8 @@ namespace Section_Modulus_Calculator.opentk_control.opentk_bgdraw
             float mid_x = drawing_area_width * 0.5f;
             float mid_y = drawing_area_height * 0.5f;
 
-            float mouse_x = ((float)(screen_X - mid_x) / (float)(min_drawing_area_size * 0.5f));
-            float mouse_y = -1.0f * ((float)(screen_Y - mid_y) / (float)(min_drawing_area_size * 0.5f));
+            float mouse_x = ((float)(screen_X - mid_x) / (float)((min_drawing_area_size-_margin) * 0.5f));
+            float mouse_y = -1.0f * ((float)(screen_Y - mid_y) / (float)((min_drawing_area_size -_margin) * 0.5f));
 
             return (new PointF((float)(mouse_x - (2.0f * transl_x)) / zm, (float)(mouse_y - (2.0f * transl_y)) / zm));
         }
