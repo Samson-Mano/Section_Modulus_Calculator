@@ -101,25 +101,25 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             lines_list_store rslt_ln_list = new lines_list_store();
 
             // Get the arc angles
-            Tuple<double, double> g_angles = global_variables.gvariables_static.get_arc_angles(new PointF((float)start_pt.dx, (float)start_pt.dy),
-                new PointF((float)end_pt.dx, (float)end_pt.dy),
-                new PointF((float)crown_pt.dx, (float)crown_pt.dy),
-                new PointF((float)center_pt.dx, (float)center_pt.dy));
+            Tuple<double, double> g_angles = global_variables.gvariables_static.get_arc_angles(new PointF((float)start_pt.d_x, (float)start_pt.d_y),
+                new PointF((float)end_pt.d_x, (float)end_pt.d_y),
+                new PointF((float)crown_pt.d_x, (float)crown_pt.d_y),
+                new PointF((float)center_pt.d_x, (float)center_pt.d_y));
 
             // Arc radii, arc start, sweep angle and arc orientation
-            double arc_radii = Math.Sqrt(Math.Pow(center_pt.dx - crown_pt.dx, 2) + Math.Pow(center_pt.dy - crown_pt.dy, 2));
+            double arc_radii = Math.Sqrt(Math.Pow(center_pt.d_x - crown_pt.d_x, 2) + Math.Pow(center_pt.d_y - crown_pt.d_y, 2));
             double start_angle = g_angles.Item1;
             double sweep_angle = g_angles.Item2;
-            int arc_orientation = global_variables.gvariables_static.ordered_orientation(new PointF((float)start_pt.dx, (float)start_pt.dy),
-                new PointF((float)end_pt.dx, (float)end_pt.dy),
-                new PointF((float)crown_pt.dx, (float)crown_pt.dy));
+            int arc_orientation = global_variables.gvariables_static.ordered_orientation(new PointF((float)start_pt.d_x, (float)start_pt.d_y),
+                new PointF((float)end_pt.d_x, (float)end_pt.d_y),
+                new PointF((float)crown_pt.d_x, (float)crown_pt.d_y));
 
             // Find the Arc Discretized points
             double spt_x, spt_y;
             double ept_x, ept_y;
 
             double param_t = ((double)0 / (double)(discretized_count - 1));
-            Tuple<double, double> pt_at_param_t = get_arc_pt_at_t(param_t, start_angle, sweep_angle, arc_radii, center_pt.dx, center_pt.dy, arc_orientation);
+            Tuple<double, double> pt_at_param_t = get_arc_pt_at_t(param_t, start_angle, sweep_angle, arc_radii, center_pt.d_x, center_pt.d_y, arc_orientation);
             spt_x = pt_at_param_t.Item1;
             spt_y = pt_at_param_t.Item2;
 
@@ -129,7 +129,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             for (int i = 1; i < discretized_count; i++)
             {
                 param_t = ((double)i / (double)(discretized_count - 1));
-                pt_at_param_t = get_arc_pt_at_t(param_t, start_angle, sweep_angle, arc_radii, center_pt.dx, center_pt.dy, arc_orientation);
+                pt_at_param_t = get_arc_pt_at_t(param_t, start_angle, sweep_angle, arc_radii, center_pt.d_x, center_pt.d_y, arc_orientation);
                 ept_x = pt_at_param_t.Item1;
                 ept_y = pt_at_param_t.Item2;
 
@@ -187,8 +187,8 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
         public Tuple<double, double> get_line_pt_at_t(double param_t, point_store start_pt, point_store end_pt)
         {
             // Get line points
-            double t_dx = start_pt.dx * (1 - param_t) + (end_pt.dx * param_t);
-            double t_dy = start_pt.dy * (1 - param_t) + (end_pt.dy * param_t);
+            double t_dx = start_pt.d_x * (1 - param_t) + (end_pt.d_x * param_t);
+            double t_dy = start_pt.d_y * (1 - param_t) + (end_pt.d_y * param_t);
 
             return new Tuple<double, double>(t_dx, t_dy);
         }
@@ -210,7 +210,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 
         public Tuple<double, double> getCasteljauPoint(List<point_store> cntrl_pts, int r, int i, double param_t)
         {
-            if (r == 0) return new Tuple<double, double>(cntrl_pts[i].dx, cntrl_pts[i].dy);
+            if (r == 0) return new Tuple<double, double>(cntrl_pts[i].d_x, cntrl_pts[i].d_y);
 
             Tuple<double, double> p1 = getCasteljauPoint(cntrl_pts, r - 1, i, param_t);
             Tuple<double, double> p2 = getCasteljauPoint(cntrl_pts, r - 1, i + 1, param_t);

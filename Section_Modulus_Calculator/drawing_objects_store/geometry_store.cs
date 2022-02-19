@@ -10,6 +10,9 @@ namespace Section_Modulus_Calculator.drawing_objects_store
     public class geometry_store
     {
         public HashSet<surface_store> all_surfaces { get; private set;  }
+
+        public HashSet<ellipse_store> all_endpoints { get; private set; }
+
         public bool is_geometry_set { get; private set; }
 
 
@@ -20,11 +23,11 @@ namespace Section_Modulus_Calculator.drawing_objects_store
         }
 
 
-        public void add_surface(HashSet<surface_store> t_all_surfaces)
+        public void add_geometry(HashSet<surface_store> t_all_surfaces, HashSet<ellipse_store> t_all_ellipses)
         {
             // Add all the surfaces
             this.all_surfaces = new HashSet<surface_store>(t_all_surfaces);
-            
+            this.all_endpoints = new HashSet<ellipse_store>(t_all_ellipses);
         }
 
         public void set_openTK_objects()
@@ -34,6 +37,13 @@ namespace Section_Modulus_Calculator.drawing_objects_store
             {
                 surf.set_openTK_objects();
             }
+
+            // Set the surface end points openTK
+            foreach (ellipse_store ellipse in this.all_endpoints)
+            {
+                ellipse.set_openTK_objects();
+            }
+
             this.is_geometry_set = true;
         }
 
@@ -41,9 +51,16 @@ namespace Section_Modulus_Calculator.drawing_objects_store
         {
             if(this.is_geometry_set == true)
             {
+                // Paint the surface boundaries
                 foreach (surface_store surf in this.all_surfaces)
                 {
                     surf.paint_boundaries();
+                }
+
+                // Paint the end points boundaries
+                foreach (ellipse_store ellipse in this.all_endpoints)
+                {
+                    ellipse.paint_ellipse();
                 }
             }
         }

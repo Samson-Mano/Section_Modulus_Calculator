@@ -16,16 +16,16 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 
         public int pt_id { get; private set; }
 
-        public double dx { get; private set; }
+        public double d_x { get; private set; }
 
-        public double dy { get; private set; }
+        public double d_y { get; private set; }
 
         private float[] get_vertex_coords()
         {
             float[] vertex_coord = new float[3];
             // Add vertex to list
-            vertex_coord[0] = (float)dx;
-            vertex_coord[1] = (float)dy;
+            vertex_coord[0] = (float)d_x;
+            vertex_coord[1] = (float)d_y;
             vertex_coord[2] = 0.0f;
 
             return vertex_coord;
@@ -61,8 +61,8 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             // input t_x & t_y should be less than 2000.0000000 (to avoid exceeding int size)
             // Main constructor
             this.pt_id = t_pt_id;
-            this.dx = t_x;
-            this.dy = t_y;
+            this.d_x = t_x;
+            this.d_y = t_y;
 
             // Add the input to integer to avoid floating point impressision issues
             // Easier to compare the inputs

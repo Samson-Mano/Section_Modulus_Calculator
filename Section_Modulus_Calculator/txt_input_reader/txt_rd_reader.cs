@@ -270,10 +270,5 @@ namespace Section_Modulus_Calculator.txt_input_reader
             }
         }
 
-
-
-
-
-
     }
 }

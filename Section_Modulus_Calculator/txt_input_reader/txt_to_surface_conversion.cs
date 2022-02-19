@@ -16,6 +16,9 @@ namespace Section_Modulus_Calculator.txt_input_reader
         private txt_rd_reader txt_rd_rslt;
 
         public HashSet<surface_store> all_surface { get; private set; }
+
+        public HashSet<ellipse_store> all_ellipses { get; private set; }
+
         public float dr_scale { get; private set; }
         public float dr_tx { get; private set; }
         public float dr_ty { get; private set; }
@@ -23,7 +26,8 @@ namespace Section_Modulus_Calculator.txt_input_reader
         public txt_to_surface_conversion(txt_rd_reader t_txt_rd_rslt)
         {
             this.txt_rd_rslt = t_txt_rd_rslt;
-            // initialize the surface lise
+
+            // initialize the surface list
             this.all_surface = new HashSet<surface_store>();
 
             foreach (txt_rd_reader.string_data_store surf_string in txt_rd_rslt.str_surf_datas)
@@ -47,6 +51,27 @@ namespace Section_Modulus_Calculator.txt_input_reader
                 this.all_surface.Add(new surface_store(surf_id, outer_closed_bndry, inner_closed_bndries));
             }
 
+            // initialize the end points
+            this.all_ellipses = new HashSet<ellipse_store>();
+
+            foreach (txt_rd_reader.string_data_store pts_string in txt_rd_rslt.str_endpt_datas)
+            {
+                int pts_id;
+                int.TryParse(pts_string.str_id, out pts_id);
+
+                // Points
+                string[] str_pt = pts_string.str_main_data.Split(',');
+
+                // Convert to double
+                double x_coord, y_coord;
+                double.TryParse(str_pt[0], out x_coord);
+                double.TryParse(str_pt[1], out y_coord);
+
+                // Add to the surface list
+                this.all_ellipses.Add(new ellipse_store(pts_id,x_coord,y_coord,Color.Brown,1));
+            }
+
+
             if (this.all_surface.Count != 0)
             {
                 // Set the boundary size
@@ -62,11 +87,11 @@ namespace Section_Modulus_Calculator.txt_input_reader
                         foreach (point_store pts in curv.curve_t_pts.all_pts)
                         {
                             // Max, Min x
-                            max_x = Math.Max(max_x, pts.dx);
-                            min_x = Math.Min(min_x, pts.dx);
+                            max_x = Math.Max(max_x, pts.d_x);
+                            min_x = Math.Min(min_x, pts.d_x);
                             // Max, Min y
-                            max_y = Math.Max(max_y, pts.dy);
-                            min_y = Math.Min(min_y, pts.dy);
+                            max_y = Math.Max(max_y, pts.d_y);
+                            min_y = Math.Min(min_y, pts.d_y);
                         }
                     }
 
@@ -191,7 +216,6 @@ namespace Section_Modulus_Calculator.txt_input_reader
 
             return new closed_boundary_store(bndry_id, bndry_curves);
         }
-
 
         private int line_index_found(int curve_id)
         {

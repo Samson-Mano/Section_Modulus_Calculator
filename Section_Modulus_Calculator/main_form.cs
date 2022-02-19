@@ -94,7 +94,7 @@ namespace Section_Modulus_Calculator
                 {
                     // Re-initialize the geometry
                     geom_obj = new geometry_store();
-                    geom_obj.add_surface(surf_conv.all_surface);
+                    geom_obj.add_geometry(surf_conv.all_surface,surf_conv.all_ellipses);
                     geom_obj.set_openTK_objects();
 
                     g_control.update_drawing_scale_and_translation(surf_conv.dr_scale, surf_conv.dr_tx, surf_conv.dr_ty,true);
