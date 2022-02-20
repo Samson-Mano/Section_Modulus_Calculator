@@ -21,7 +21,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 
         private triangle_list_store ellipse_segments = new triangle_list_store();
 
-        private int segment_count = 10;
+        private int segment_count = 30;
 
         public ellipse_store(int t_ellipse_id, double t_x, double t_y, Color pt_clr, double t_radius)
         {

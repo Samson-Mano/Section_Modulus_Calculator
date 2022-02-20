@@ -56,7 +56,6 @@ namespace Section_Modulus_Calculator.drawing_objects_store
                 {
                     surf.paint_boundaries();
                 }
-
                 // Paint the end points boundaries
                 foreach (ellipse_store ellipse in this.all_endpoints)
                 {

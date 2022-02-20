@@ -51,26 +51,6 @@ namespace Section_Modulus_Calculator.txt_input_reader
                 this.all_surface.Add(new surface_store(surf_id, outer_closed_bndry, inner_closed_bndries));
             }
 
-            // initialize the end points
-            this.all_ellipses = new HashSet<ellipse_store>();
-
-            foreach (txt_rd_reader.string_data_store pts_string in txt_rd_rslt.str_endpt_datas)
-            {
-                int pts_id;
-                int.TryParse(pts_string.str_id, out pts_id);
-
-                // Points
-                string[] str_pt = pts_string.str_main_data.Split(',');
-
-                // Convert to double
-                double x_coord, y_coord;
-                double.TryParse(str_pt[0], out x_coord);
-                double.TryParse(str_pt[1], out y_coord);
-
-                // Add to the surface list
-                this.all_ellipses.Add(new ellipse_store(pts_id,x_coord,y_coord,Color.Brown,1));
-            }
-
 
             if (this.all_surface.Count != 0)
             {
@@ -106,6 +86,27 @@ namespace Section_Modulus_Calculator.txt_input_reader
                 // Translation values
                 this.dr_tx = (-0.5f * (float)(max_x + min_x)) * this.dr_scale;
                 this.dr_ty = (-0.5f * (float)(max_y + min_y)) * this.dr_scale;
+
+
+                // initialize the end points
+                this.all_ellipses = new HashSet<ellipse_store>();
+
+                foreach (txt_rd_reader.string_data_store pts_string in txt_rd_rslt.str_endpt_datas)
+                {
+                    int pts_id;
+                    int.TryParse(pts_string.str_id, out pts_id);
+
+                    // Points
+                    string[] str_pt = pts_string.str_main_data.Split(',');
+
+                    // Convert to double
+                    double x_coord, y_coord;
+                    double.TryParse(str_pt[0], out x_coord);
+                    double.TryParse(str_pt[1], out y_coord);
+
+                    // Add to the surface list
+                    this.all_ellipses.Add(new ellipse_store(pts_id, x_coord, y_coord, Color.Brown, Math.Abs(Math.Max(bound_x, bound_y)) * 0.005));
+                }
 
             }
         }

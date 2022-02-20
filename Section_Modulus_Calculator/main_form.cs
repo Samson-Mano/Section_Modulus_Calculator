@@ -35,8 +35,6 @@ namespace Section_Modulus_Calculator
         // Cursor point on the GLControl
         private PointF click_pt;
 
-
-
         public main_form()
         {
             InitializeComponent();
@@ -150,6 +148,8 @@ namespace Section_Modulus_Calculator
             // Paint the drawing area (glControl_main)
             // Tell OpenGL to use MyGLControl
             glControl_main_panel.MakeCurrent();
+
+            GL.Enable(EnableCap.PolygonSmooth);
 
             // Paint the background
             g_control.set_opengl_shader(1);
