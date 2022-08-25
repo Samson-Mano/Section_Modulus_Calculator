@@ -19,6 +19,8 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 
         public lines_list_store curve_as_tlines { get; private set; }
 
+        public label_store curve_label { get; private set; }
+
         public curve_types_enum curve_type { get; private set; }
 
         public Color curve_color { get; private set; }
@@ -38,10 +40,10 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             this.curve_end_pts = new points_list_store();
             // Start pt
             this.curve_end_pts.add_point(t_curve_start_pt);
-    
+
             // Add curve control points
             this.curve_cntrl_pts = new points_list_store();
-            foreach(point_store c_pts in t_curve_cntrl_pts)
+            foreach (point_store c_pts in t_curve_cntrl_pts)
             {
                 this.curve_cntrl_pts.add_point(c_pts);
             }
@@ -54,11 +56,37 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 
             // Discretize the curve into segments
             // Find all the curve points & lines
-            Tuple<lines_list_store, points_list_store> temp = new curve_discretization().get_all_points_at_t(100, t_ctype,this.curve_end_pts, this.curve_cntrl_pts, this.curve_color);
+            Tuple<lines_list_store, points_list_store> temp = new curve_discretization().get_all_points_at_t(100, t_ctype, this.curve_end_pts, this.curve_cntrl_pts, this.curve_color);
 
             // Add all the lines and points to the list
             this.curve_as_tlines = temp.Item1;
             this.curve_t_pts = temp.Item2;
+
+            // Create labels for this curve
+            double label_pt_x = 0.0, label_pt_y = 0.0;
+
+
+            if (t_ctype == curve_types_enum.line)
+            {
+                // line label
+                label_pt_x = (t_curve_start_pt.d_x + t_curve_end_pt.d_x) * 0.5;
+                label_pt_y = (t_curve_start_pt.d_y + t_curve_end_pt.d_y) * 0.5;
+            }
+            else if (t_ctype == curve_types_enum.arc)
+            {
+                // arc label
+                label_pt_x = t_curve_cntrl_pts[0].d_x;
+                label_pt_y = t_curve_cntrl_pts[0].d_y;
+            }
+            else
+            {
+                // bezier label
+                label_pt_x = t_curve_cntrl_pts[0].d_x;
+                label_pt_y = t_curve_cntrl_pts[0].d_y;
+            }
+
+            this.curve_label = new label_store(t_cur_id,32,new point_store(t_cur_id,label_pt_x,label_pt_y, Color.BlueViolet),"h");
+            //this.curve_label.add_label(t_cur_id, 32, label_pt_x, label_pt_y, "h", Color.BlueViolet);
         }
 
         public void set_openTK_objects()
@@ -72,6 +100,13 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             // Paint the curves
             // Set openTK becore calling this function
             this.curve_as_tlines.paint_all_lines();
+
+        }
+
+        public void paint_curve_label()
+        {
+            // Paint the curve label
+            this.curve_label.paint_label();
         }
 
         public override bool Equals(object obj)

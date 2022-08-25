@@ -22,6 +22,7 @@ namespace Section_Modulus_Calculator.txt_input_reader
         public float dr_scale { get; private set; }
         public float dr_tx { get; private set; }
         public float dr_ty { get; private set; }
+        public double ellipse_size_control { get; private set; }
 
         public txt_to_surface_conversion(txt_rd_reader t_txt_rd_rslt)
         {
@@ -105,7 +106,9 @@ namespace Section_Modulus_Calculator.txt_input_reader
                     double.TryParse(str_pt[1], out y_coord);
 
                     // Add to the surface list
-                    this.all_ellipses.Add(new ellipse_store(pts_id, x_coord, y_coord, Color.Brown, Math.Abs(Math.Max(bound_x, bound_y)) * 0.005));
+                    this.ellipse_size_control = Math.Abs(Math.Max(bound_x, bound_y));
+                    global_variables.gvariables_static.ellipse_size_control = this.ellipse_size_control;
+                    this.all_ellipses.Add(new ellipse_store(pts_id, x_coord, y_coord, Color.Brown, this.ellipse_size_control * 0.005));
                 }
 
             }
@@ -115,6 +118,7 @@ namespace Section_Modulus_Calculator.txt_input_reader
         private closed_boundary_store find_the_closed_bndry_curves(int bndry_id, string str_bndry_curve_ids)
         {
             // Outter boundary
+            int previous_end_pt_id = -1, previous_start_pt_id = -1;
             string[] bndry_curves_id = str_bndry_curve_ids.Split(',');
 
             HashSet<curve_store> bndry_curves = new HashSet<curve_store>();
@@ -140,6 +144,36 @@ namespace Section_Modulus_Calculator.txt_input_reader
                     int.TryParse(end_ptid[0], out start_pt_id);
                     int.TryParse(end_ptid[1], out end_pt_id);
 
+                    // Check the ids before proceeding
+                    if (previous_end_pt_id != start_pt_id && previous_end_pt_id != end_pt_id)
+                    {
+                        if (previous_end_pt_id == -1)
+                        {
+                            // First instance so ignore
+                        }
+                        else if (previous_start_pt_id == start_pt_id || previous_start_pt_id == end_pt_id)
+                        {
+                            int temp_id = previous_start_pt_id;
+                            previous_start_pt_id = previous_end_pt_id;
+                            previous_end_pt_id = temp_id;
+                        }
+                        else
+                        {
+                            System.Windows.Forms.MessageBox.Show("Error");
+                        }
+                    }
+
+                    // Flip ids based on the previous id
+                    if ((previous_end_pt_id != start_pt_id) && previous_end_pt_id !=-1)
+                    {
+                        int temp_id = start_pt_id;
+                        start_pt_id = end_pt_id;
+                        end_pt_id = temp_id;
+                    }
+
+                    previous_start_pt_id = start_pt_id;
+                    previous_end_pt_id = end_pt_id;
+
                     point_store start_pt = str_to_points(start_pt_id, this.txt_rd_rslt.str_endpt_datas[endpt_index_found(start_pt_id)].str_main_data);
                     point_store end_pt = str_to_points(end_pt_id, this.txt_rd_rslt.str_endpt_datas[endpt_index_found(end_pt_id)].str_main_data);
                     // Additional inputs (Control points) Empty for line
@@ -163,6 +197,37 @@ namespace Section_Modulus_Calculator.txt_input_reader
                     // Find the start and end pt id
                     int.TryParse(end_ptid[0], out start_pt_id);
                     int.TryParse(end_ptid[1], out end_pt_id);
+
+
+                    // Check the ids before proceeding
+                    if (previous_end_pt_id != start_pt_id && previous_end_pt_id != end_pt_id)
+                    {
+                        if (previous_end_pt_id == -1)
+                        {
+                            // First instance so ignore
+                        }
+                        else if (previous_start_pt_id == start_pt_id || previous_start_pt_id == end_pt_id)
+                        {
+                            int temp_id = previous_start_pt_id;
+                            previous_start_pt_id = previous_end_pt_id;
+                            previous_end_pt_id = temp_id;
+                        }
+                        else
+                        {
+                            System.Windows.Forms.MessageBox.Show("Error");
+                        }
+                    }
+
+                    // Flip ids based on the previous id
+                    if ((previous_end_pt_id != start_pt_id) && previous_end_pt_id != -1)
+                    {
+                        int temp_id = start_pt_id;
+                        start_pt_id = end_pt_id;
+                        end_pt_id = temp_id;
+                    }
+
+                    previous_start_pt_id = start_pt_id;
+                    previous_end_pt_id = end_pt_id;
 
                     point_store start_pt = str_to_points(start_pt_id, this.txt_rd_rslt.str_endpt_datas[endpt_index_found(start_pt_id)].str_main_data);
                     point_store end_pt = str_to_points(end_pt_id, this.txt_rd_rslt.str_endpt_datas[endpt_index_found(end_pt_id)].str_main_data);
@@ -195,6 +260,39 @@ namespace Section_Modulus_Calculator.txt_input_reader
                     int.TryParse(end_ptid[0], out start_pt_id);
                     int.TryParse(end_ptid[1], out end_pt_id);
 
+
+                    // Check the ids before proceeding
+                    if (previous_end_pt_id != start_pt_id && previous_end_pt_id != end_pt_id)
+                    {
+                        if (previous_end_pt_id == -1)
+                        {
+                            // First instance so ignore
+                        }
+                        else if (previous_start_pt_id == start_pt_id || previous_start_pt_id == end_pt_id)
+                        {
+                            int temp_id = previous_start_pt_id;
+                            previous_start_pt_id = previous_end_pt_id;
+                            previous_end_pt_id = temp_id;
+                        }
+                        else
+                        {
+                            System.Windows.Forms.MessageBox.Show("Error");
+                        }
+                    }
+
+                    // Flip ids based on the previous id
+                    bool cntrl_pt_reverse = false;
+                    if ((previous_end_pt_id != start_pt_id) && previous_end_pt_id != -1)
+                    {
+                        int temp_id = start_pt_id;
+                        start_pt_id = end_pt_id;
+                        end_pt_id = temp_id;
+                        cntrl_pt_reverse = true;
+                    }
+
+                    previous_start_pt_id = start_pt_id;
+                    previous_end_pt_id = end_pt_id;
+
                     point_store start_pt = str_to_points(start_pt_id, this.txt_rd_rslt.str_endpt_datas[endpt_index_found(start_pt_id)].str_main_data);
                     point_store end_pt = str_to_points(end_pt_id, this.txt_rd_rslt.str_endpt_datas[endpt_index_found(end_pt_id)].str_main_data);
 
@@ -205,6 +303,12 @@ namespace Section_Modulus_Calculator.txt_input_reader
                     {
                         cntrl_pts.Add(str_to_points(c_id, str_cntrl_pt));
                         c_id = c_id - 1;
+                    }
+
+                    if (cntrl_pt_reverse == true)
+                    {
+                        // reverse the control points if the start and end points are reversed
+                        cntrl_pts.Reverse();
                     }
 
                     // Create Arc

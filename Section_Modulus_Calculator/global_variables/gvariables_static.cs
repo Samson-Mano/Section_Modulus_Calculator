@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Section_Modulus_Calculator.global_variables
 {
@@ -16,11 +17,38 @@ namespace Section_Modulus_Calculator.global_variables
         public static bool Is_cntrldown = false;
         public static Color curve_color = Color.BlueViolet;
 
+        // Ellipse size control
+        public static double ellipse_size_control = 1.0;
+
         public static int RoundOff(this int i)
         {
             // Roundoff to nearest 10 (used to display zoom value)
             return ((int)Math.Round(i / 10.0)) * 10;
         }
+
+
+        public static void Show_error_Dialog(string title, string text)
+        {
+            var form = new Form()
+            {
+                Text = title,
+                Size = new Size(800, 600)
+            };
+
+            form.Controls.Add(new TextBox()
+            {
+                Font = new Font("Segoe UI", 12),
+                Text = text,
+                Multiline = true,
+                ScrollBars = ScrollBars.Both,
+                Dock = DockStyle.Fill
+            });
+
+            form.ShowDialog();
+            form.Controls.OfType<TextBox>().First().Dispose();
+            form.Dispose();
+        }
+
 
         public static double get_angle_ABX(PointF A_pt, PointF B_pt, bool is_deg = false)
         {

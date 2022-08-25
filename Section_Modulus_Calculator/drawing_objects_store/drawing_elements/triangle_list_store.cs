@@ -102,17 +102,17 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
                                      double pt2_x, double pt2_y, Color pt_clr2)
         {
             // Add points
-            this.all_tri_pts.add_point(((t_tid * 3) + 0), pt0_x, pt0_y, pt_clr0);
+            this.all_tri_pts.add_point((t_tid * 3) + 0, pt0_x, pt0_y, pt_clr0);
             point_store pt0 = this.all_tri_pts.get_last_added_pt;
 
-            this.all_tri_pts.add_point(((t_tid * 3) + 1), pt1_x, pt1_y, pt_clr1);
+            this.all_tri_pts.add_point((t_tid * 3) + 1, pt1_x, pt1_y, pt_clr1);
             point_store pt1 = this.all_tri_pts.get_last_added_pt;
 
-            this.all_tri_pts.add_point(((t_tid * 3) + 2), pt2_x, pt2_y, pt_clr2);
+            this.all_tri_pts.add_point((t_tid * 3) + 2, pt2_x, pt2_y, pt_clr2);
             point_store pt2 = this.all_tri_pts.get_last_added_pt;
 
             // Add Quad
-          this.all_tri.Add(new triangle_store(t_tid, pt0, pt1, pt2));
+            this.all_tri.Add(new triangle_store(t_tid, pt0, pt1, pt2));
         }
 
     }

@@ -95,7 +95,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             GL.DrawElements(PrimitiveType.Points, this._point_indices.Length, DrawElementsType.UnsignedInt, 0);
         }
 
-        public void add_point(int id, double t_x, double t_y, Color clr)
+        public void add_point(int id,double t_x, double t_y, Color clr)
         {
             // Add point
             point_store temp_pt = new point_store(id, t_x, t_y, clr);

@@ -19,7 +19,7 @@ namespace Section_Modulus_Calculator.opentk_control.shader_compiler
         // scale to control the units of drawing area
         private float _primary_scale = 1.0f;
         // zoom scale
-        private float _zm_scale = 1.0f;
+        public float _zm_scale = 1.0f;
         // Translation details
         private Vector3 _current_translation = new Vector3(0.0f, 0.0f, 0.0f);
         private Vector3 _previous_translation = new Vector3(0.0f, 0.0f, 0.0f);
@@ -118,7 +118,6 @@ namespace Section_Modulus_Calculator.opentk_control.shader_compiler
             scale_intelli_zoom_Transform(this._zm_scale, tx, ty);
 
         }
-
 
         public void pan_operation(Shader s_shader, float et_X, float et_Y)
         {

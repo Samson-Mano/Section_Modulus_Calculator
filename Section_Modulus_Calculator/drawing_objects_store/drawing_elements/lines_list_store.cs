@@ -15,7 +15,7 @@ using Section_Modulus_Calculator.global_variables;
 
 namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 {
-  public  class lines_list_store
+    public class lines_list_store
     {
         public List<line_store> all_lines { get; private set; }
         private points_list_store all_line_pts;
@@ -89,13 +89,14 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
                      double ept_x, double ept_y, Color ept_clr)
         {
             // Add points
-            all_line_pts.add_point(((ln_id * 2) + 0), spt_x, spt_y, spt_clr);
+            all_line_pts.add_point((ln_id * 2) + 0, spt_x, spt_y, spt_clr);
             point_store spt = all_line_pts.get_last_added_pt;
 
-            all_line_pts.add_point(((ln_id * 2) + 1), ept_x, ept_y, ept_clr);
+            all_line_pts.add_point((ln_id * 2) + 1, ept_x, ept_y, ept_clr);
             point_store ept = all_line_pts.get_last_added_pt;
 
             // Add line
+
             all_lines.Add(new line_store(ln_id, spt, ept));
         }
     }

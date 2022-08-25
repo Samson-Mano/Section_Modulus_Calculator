@@ -46,7 +46,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.ln_id, this.start_pt.pt_id, this.end_pt.pt_id);
+            return HashCode.Combine(this.start_pt.pt_id, this.end_pt.pt_id);
         }
     }
 }

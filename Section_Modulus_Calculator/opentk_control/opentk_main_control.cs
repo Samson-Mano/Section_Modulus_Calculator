@@ -28,8 +28,12 @@ namespace Section_Modulus_Calculator.opentk_control
         private Shader _br_shader;
         // Drawing shader
         private Shader _dr_shader;
+        // Text shader
+        private Shader _txt_shader;
 
         // Imported drawing scale
+        public float _zoom_val { get; private set; }
+
         private float _dr_d_scale = 1.0f;
 
         public opentk_main_control()
@@ -48,6 +52,9 @@ namespace Section_Modulus_Calculator.opentk_control
 
             this._dr_shader = new Shader(all_shaders.get_vertex_shader(shader_control.shader_type.br_shader),
                  all_shaders.get_fragment_shader(shader_control.shader_type.br_shader));
+
+            this._txt_shader = new Shader(all_shaders.get_vertex_shader(shader_control.shader_type.txt_shader),
+                 all_shaders.get_fragment_shader(shader_control.shader_type.txt_shader));
 
             // create the boundary
             boundary_rect = new boundary_rectangle_store(true, this._br_shader);
@@ -74,6 +81,10 @@ namespace Section_Modulus_Calculator.opentk_control
             {
                 _dr_shader.Use();
             }
+            else if(s_type ==3)
+            {
+                _txt_shader.Use();
+            }
         }
 
 
@@ -82,6 +93,7 @@ namespace Section_Modulus_Calculator.opentk_control
             // update the drawing area size
             this._br_shader.update_shader.update_primary_scale(this._br_shader, width, height);
             this._dr_shader.update_shader.update_primary_scale(this._dr_shader, width, height);
+            // this._txt_shader.update_shader.update_primary_scale(this._txt_shader, width, height);
 
             // Update the drawing scale and translation
             update_drawing_scale_and_translation(this._dr_d_scale, 0.0f, 0.0f,false);
@@ -99,8 +111,8 @@ namespace Section_Modulus_Calculator.opentk_control
             // Update the drawing size
             this._dr_d_scale = d_scale;
     
-            this._dr_shader.update_shader.update_scale_and_orgintranslation(this._dr_shader,d_scale, t_trans_x, t_trans_y, set_origin);
-
+             this._dr_shader.update_shader.update_scale_and_orgintranslation(this._dr_shader,d_scale, t_trans_x, t_trans_y, set_origin);
+             // this._txt_shader.update_shader.update_scale_and_orgintranslation(this._txt_shader, d_scale, t_trans_x, t_trans_y, set_origin);
         }
 
         public void intelli_zoom_operation(double e_Delta, int e_X, int e_Y)
@@ -108,6 +120,9 @@ namespace Section_Modulus_Calculator.opentk_control
             // Intelli zoom all the vertex shaders
             this._br_shader.update_shader.intelli_zoom(this._br_shader, e_Delta, e_X, e_Y);
             this._dr_shader.update_shader.intelli_zoom(this._dr_shader, e_Delta, e_X, e_Y);
+            // this._txt_shader.update_shader.intelli_zoom(this._txt_shader, e_Delta, e_X, e_Y);
+
+            this._zoom_val = this._dr_shader.update_shader._zm_scale;
         }
 
         public void pan_operation(float et_X, float et_Y)
@@ -115,6 +130,7 @@ namespace Section_Modulus_Calculator.opentk_control
             // Pan the vertex shader
             this._br_shader.update_shader.pan_operation(this._br_shader, et_X, et_Y);
             this._dr_shader.update_shader.pan_operation(this._dr_shader, et_X, et_Y);
+            // this._txt_shader.update_shader.pan_operation(this._txt_shader, et_X, et_Y);
         }
 
         public void pan_operation_complete()
@@ -122,6 +138,7 @@ namespace Section_Modulus_Calculator.opentk_control
             // End the pan operation saving translate
             this._br_shader.update_shader.save_translate_transform();
             this._dr_shader.update_shader.save_translate_transform();
+            // this._txt_shader.update_shader.save_translate_transform();
         }
 
         public void zoom_to_fit(ref GLControl this_Gcntrl)
@@ -129,6 +146,7 @@ namespace Section_Modulus_Calculator.opentk_control
             // Zoom to fit the vertex shader
             this._br_shader.update_shader.zoom_to_fit_operation(this._br_shader, ref this_Gcntrl);
             this._dr_shader.update_shader.zoom_to_fit_operation(this._dr_shader, ref this_Gcntrl);
+            // this._txt_shader.update_shader.zoom_to_fit_operation(this._txt_shader, ref this_Gcntrl);
         }
     }
 }

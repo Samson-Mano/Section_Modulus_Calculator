@@ -73,7 +73,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             spt_y = pt_at_param_t.Item2;
 
             // Add first point
-            rslt_pt_list.add_point(0, spt_x, spt_y, this.pt_clr);
+            rslt_pt_list.add_point(0,spt_x, spt_y, this.pt_clr);
 
             for (int i = 1; i < discretized_count; i++)
             {
@@ -124,7 +124,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
             spt_y = pt_at_param_t.Item2;
 
             // Add first point
-            rslt_pt_list.add_point(0, spt_x, spt_y, this.pt_clr);
+            rslt_pt_list.add_point(0,spt_x, spt_y, this.pt_clr);
 
             for (int i = 1; i < discretized_count; i++)
             {
@@ -134,7 +134,7 @@ namespace Section_Modulus_Calculator.drawing_objects_store.drawing_elements
                 ept_y = pt_at_param_t.Item2;
 
                 // Add to point list
-                rslt_pt_list.add_point(i, ept_x, ept_y, this.pt_clr);
+                rslt_pt_list.add_point(i,ept_x, ept_y, this.pt_clr);
 
                 // Add line list
                 rslt_ln_list.add_line(i - 1, spt_x, spt_y, this.pt_clr, ept_x, ept_y, this.pt_clr);

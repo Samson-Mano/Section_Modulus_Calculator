@@ -29,9 +29,6 @@ namespace Section_Modulus_Calculator
         // glControl wrapper class
         private opentk_main_control g_control;
 
-        // Main zoom variables
-        private float zm = 1.0f;
-
         // Cursor point on the GLControl
         private PointF click_pt;
 
@@ -88,6 +85,7 @@ namespace Section_Modulus_Calculator
                 txt_rd_reader txt_rd = new txt_rd_reader(ow.FileName);
                 txt_to_surface_conversion surf_conv = new txt_to_surface_conversion(txt_rd);
 
+                
                 if (surf_conv.all_surface.Count != 0)
                 {
                     // Re-initialize the geometry
@@ -102,6 +100,7 @@ namespace Section_Modulus_Calculator
                     richTextBox_result.Text = richTextBox_result.Text + Environment.NewLine;
                     richTextBox_result.Text = richTextBox_result.Text + "Scale = " + surf_conv.dr_scale.ToString() + Environment.NewLine;
                     richTextBox_result.Text = richTextBox_result.Text + "Tx = " + surf_conv.dr_tx.ToString() + ", Ty = " + surf_conv.dr_ty.ToString() + Environment.NewLine;
+                    // richTextBox_result.Clear();
 
                     glControl_main_panel.Invalidate();
                 }
@@ -117,8 +116,43 @@ namespace Section_Modulus_Calculator
 
         private void button_calculate_Click(object sender, EventArgs e)
         {
-            // Calculate Section Modulus
-            MessageBox.Show("Calculate");
+            richTextBox_result.Clear();
+
+            // Calculate geometric parameters
+            geom_obj.set_geometric_parameter();
+            // Step 1 Calculate cross sectional area
+            double cross_section_area = 0.0;
+            cross_section_area = geom_obj.geometry_cs_area;
+
+            richTextBox_result.Text = richTextBox_result.Text + "Cross sectional area = " + cross_section_area.ToString("F4") + Environment.NewLine + Environment.NewLine;
+
+            // Step 2 Calculate centroid
+            double centroid_x = 0.0;
+            double centroid_y = 0.0;
+
+            centroid_x = geom_obj.geometry_x_center;
+            centroid_y = geom_obj.geometry_y_center;
+
+            richTextBox_result.Text = richTextBox_result.Text + "Geometric center" + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "x centroid = " + centroid_x.ToString("F4") + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "y centroid = " + centroid_y.ToString("F4") + Environment.NewLine + Environment.NewLine;
+
+            // Step 3 Calculate the moment of inertia about the centroid
+            double moi_x = 0.0;
+            double moi_y = 0.0;
+            double moi_xy = 0.0;
+
+            moi_x = geom_obj.geometry_x_moi;
+            moi_y = geom_obj.geometry_y_moi;
+            moi_xy = geom_obj.geometry_xy_moi;
+
+            richTextBox_result.Text = richTextBox_result.Text + "Moments and product of inertia about centroid" + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "Ixx = " + moi_x.ToString("F4") + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "Iyy = " + moi_y.ToString("F4") + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "Ixy = " + moi_xy.ToString("F4") + Environment.NewLine + Environment.NewLine;
+
+            geom_obj.set_openTK_objects();
+            glControl_main_panel.Invalidate();
 
         }
 
@@ -149,7 +183,8 @@ namespace Section_Modulus_Calculator
             // Tell OpenGL to use MyGLControl
             glControl_main_panel.MakeCurrent();
 
-            GL.Enable(EnableCap.PolygonSmooth);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(0, BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             // Paint the background
             g_control.set_opengl_shader(1);
@@ -160,6 +195,25 @@ namespace Section_Modulus_Calculator
             g_control.set_opengl_shader(2);
             GL.LineWidth(3.0f);
             geom_obj.paint_geometry();
+
+            // Display the text
+            g_control.set_opengl_shader(3);
+            //Matrix4 projectionM = Matrix4.CreateScale(new Vector3(1f / glControl_main_panel.Width,
+            //    1f / glControl_main_panel.Height, 1.0f));
+            // Matrix4 projectionM = Matrix4.CreateOrthographicOffCenter(0.0f, glControl_main_panel.Width, glControl_main_panel.Height, 0.0f, -1.0f, 1.0f);
+
+            float a1 = 1f / glControl_main_panel.Width;
+            float a2 = 1f / glControl_main_panel.Height;
+
+            Matrix4 projectionM = new Matrix4((2*a1), 0.0f, 0.0f, 0.0f,
+                0.0f, (-2*a2) , 0.0f, 0.0f,
+                0.0f, 0.0f, -1.0f , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f );
+
+            GL.UniformMatrix4(1, false, ref projectionM);
+            // GL.Uniform3(2, new Vector3(0.5f, 0.8f, 0.2f));
+
+           // geom_obj.paint_text();
 
             // OpenTK windows are what's known as "double-buffered". In essence, the window manages two buffers.
             // One is rendered to while the other is currently displayed by the window.
@@ -208,7 +262,7 @@ namespace Section_Modulus_Calculator
                 g_control.intelli_zoom_operation(e.Delta, e.X, e.Y);
 
                 // Update the zoom value in tool strip status bar
-                toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(1.0f * 100))).ToString() + "%";
+                toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(100f * g_control._zoom_val))).ToString() + "%";
                 // Refresh the painting area
                 glControl_main_panel.Refresh();
             }
@@ -258,7 +312,8 @@ namespace Section_Modulus_Calculator
                     // (Ctrl + F) --> Zoom to fit
                     g_control.zoom_to_fit(ref glControl_main_panel);
 
-                    toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(zm * 100))).ToString() + "%";
+                    toolStripStatusLabel_zoom_value.Text = "Zoom: " + (gvariables_static.RoundOff((int)(1.0f * 100))).ToString() + "%";
+                    toolStripStatusLabel_zoom_value.Invalidate();
                 }
             }
         }
