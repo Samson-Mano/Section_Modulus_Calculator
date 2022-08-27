@@ -94,21 +94,21 @@ namespace Section_Modulus_Calculator
             // toolStripMenuItem_import
             // 
             this.toolStripMenuItem_import.Name = "toolStripMenuItem_import";
-            this.toolStripMenuItem_import.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItem_import.Size = new System.Drawing.Size(206, 26);
             this.toolStripMenuItem_import.Text = "Import Geometry";
             this.toolStripMenuItem_import.Click += new System.EventHandler(this.button_import_Click);
             // 
             // toolStripMenuItem_calculate
             // 
             this.toolStripMenuItem_calculate.Name = "toolStripMenuItem_calculate";
-            this.toolStripMenuItem_calculate.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItem_calculate.Size = new System.Drawing.Size(206, 26);
             this.toolStripMenuItem_calculate.Text = "Calculate";
             this.toolStripMenuItem_calculate.Click += new System.EventHandler(this.button_calculate_Click);
             // 
             // toolStripMenuItem_close
             // 
             this.toolStripMenuItem_close.Name = "toolStripMenuItem_close";
-            this.toolStripMenuItem_close.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItem_close.Size = new System.Drawing.Size(206, 26);
             this.toolStripMenuItem_close.Text = "Exit";
             this.toolStripMenuItem_close.Click += new System.EventHandler(this.toolStripMenuItem_close_ItemClicked);
             // 
@@ -159,8 +159,8 @@ namespace Section_Modulus_Calculator
             this.richTextBox_result.Name = "richTextBox_result";
             this.richTextBox_result.Size = new System.Drawing.Size(322, 267);
             this.richTextBox_result.TabIndex = 6;
-            this.richTextBox_result.Text = "XX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXX" +
-    "XXXXXXXXXXXX\nXX\nXX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXX\nXX\nXX\nXX";
+            this.richTextBox_result.Text = "Geometric properties of Sections\n\nDeveloped by\nSamson Mano\nhttps://github.com/Sam" +
+    "son-Mano";
             this.richTextBox_result.WordWrap = false;
             // 
             // main_form
