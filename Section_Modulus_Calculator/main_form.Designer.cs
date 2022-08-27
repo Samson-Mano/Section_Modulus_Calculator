@@ -36,12 +36,10 @@ namespace Section_Modulus_Calculator
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem_file = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_import = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_modify = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_calculate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_close = new System.Windows.Forms.ToolStripMenuItem();
             this.glControl_main_panel = new OpenTK.GLControl();
             this.button_import = new System.Windows.Forms.Button();
-            this.button_referenceaxis = new System.Windows.Forms.Button();
             this.button_calculate = new System.Windows.Forms.Button();
             this.richTextBox_result = new System.Windows.Forms.RichTextBox();
             this.statusStrip1.SuspendLayout();
@@ -87,7 +85,6 @@ namespace Section_Modulus_Calculator
             // 
             this.toolStripMenuItem_file.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_import,
-            this.toolStripMenuItem_modify,
             this.toolStripMenuItem_calculate,
             this.toolStripMenuItem_close});
             this.toolStripMenuItem_file.Name = "toolStripMenuItem_file";
@@ -97,28 +94,21 @@ namespace Section_Modulus_Calculator
             // toolStripMenuItem_import
             // 
             this.toolStripMenuItem_import.Name = "toolStripMenuItem_import";
-            this.toolStripMenuItem_import.Size = new System.Drawing.Size(240, 26);
+            this.toolStripMenuItem_import.Size = new System.Drawing.Size(224, 26);
             this.toolStripMenuItem_import.Text = "Import Geometry";
             this.toolStripMenuItem_import.Click += new System.EventHandler(this.button_import_Click);
-            // 
-            // toolStripMenuItem_modify
-            // 
-            this.toolStripMenuItem_modify.Name = "toolStripMenuItem_modify";
-            this.toolStripMenuItem_modify.Size = new System.Drawing.Size(240, 26);
-            this.toolStripMenuItem_modify.Text = "Modify Reference Axis";
-            this.toolStripMenuItem_modify.Click += new System.EventHandler(this.button_referenceaxis_Click);
             // 
             // toolStripMenuItem_calculate
             // 
             this.toolStripMenuItem_calculate.Name = "toolStripMenuItem_calculate";
-            this.toolStripMenuItem_calculate.Size = new System.Drawing.Size(240, 26);
+            this.toolStripMenuItem_calculate.Size = new System.Drawing.Size(224, 26);
             this.toolStripMenuItem_calculate.Text = "Calculate";
             this.toolStripMenuItem_calculate.Click += new System.EventHandler(this.button_calculate_Click);
             // 
             // toolStripMenuItem_close
             // 
             this.toolStripMenuItem_close.Name = "toolStripMenuItem_close";
-            this.toolStripMenuItem_close.Size = new System.Drawing.Size(240, 26);
+            this.toolStripMenuItem_close.Size = new System.Drawing.Size(224, 26);
             this.toolStripMenuItem_close.Text = "Exit";
             this.toolStripMenuItem_close.Click += new System.EventHandler(this.toolStripMenuItem_close_ItemClicked);
             // 
@@ -153,19 +143,9 @@ namespace Section_Modulus_Calculator
             this.button_import.UseVisualStyleBackColor = true;
             this.button_import.Click += new System.EventHandler(this.button_import_Click);
             // 
-            // button_referenceaxis
-            // 
-            this.button_referenceaxis.Location = new System.Drawing.Point(521, 80);
-            this.button_referenceaxis.Name = "button_referenceaxis";
-            this.button_referenceaxis.Size = new System.Drawing.Size(150, 40);
-            this.button_referenceaxis.TabIndex = 4;
-            this.button_referenceaxis.Text = "Reference Axis";
-            this.button_referenceaxis.UseVisualStyleBackColor = true;
-            this.button_referenceaxis.Click += new System.EventHandler(this.button_referenceaxis_Click);
-            // 
             // button_calculate
             // 
-            this.button_calculate.Location = new System.Drawing.Point(521, 125);
+            this.button_calculate.Location = new System.Drawing.Point(521, 92);
             this.button_calculate.Name = "button_calculate";
             this.button_calculate.Size = new System.Drawing.Size(150, 40);
             this.button_calculate.TabIndex = 5;
@@ -175,9 +155,9 @@ namespace Section_Modulus_Calculator
             // 
             // richTextBox_result
             // 
-            this.richTextBox_result.Location = new System.Drawing.Point(448, 187);
+            this.richTextBox_result.Location = new System.Drawing.Point(448, 161);
             this.richTextBox_result.Name = "richTextBox_result";
-            this.richTextBox_result.Size = new System.Drawing.Size(322, 241);
+            this.richTextBox_result.Size = new System.Drawing.Size(322, 267);
             this.richTextBox_result.TabIndex = 6;
             this.richTextBox_result.Text = "XX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXX" +
     "XXXXXXXXXXXX\nXX\nXX\nXX\nXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXX\nXX\nXX\nXX";
@@ -190,7 +170,6 @@ namespace Section_Modulus_Calculator
             this.ClientSize = new System.Drawing.Size(782, 453);
             this.Controls.Add(this.richTextBox_result);
             this.Controls.Add(this.button_calculate);
-            this.Controls.Add(this.button_referenceaxis);
             this.Controls.Add(this.button_import);
             this.Controls.Add(this.glControl_main_panel);
             this.Controls.Add(this.statusStrip1);
@@ -217,12 +196,10 @@ namespace Section_Modulus_Calculator
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_file;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_import;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_modify;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_calculate;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_close;
         private OpenTK.GLControl glControl_main_panel;
         private System.Windows.Forms.Button button_import;
-        private System.Windows.Forms.Button button_referenceaxis;
         private System.Windows.Forms.Button button_calculate;
         private System.Windows.Forms.RichTextBox richTextBox_result;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_zoom_value;

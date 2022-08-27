@@ -62,12 +62,11 @@ namespace Section_Modulus_Calculator
             // Button location 
             int w_x = (int)(width - (width * 0.6) - 20);
             button_import.Location = new Point((int)((width * 0.6) + (w_x * 0.5) - 75), 35);
-            button_referenceaxis.Location = new Point((int)((width * 0.6) + (w_x * 0.5) - 75), 80);
-            button_calculate.Location = new Point((int)((width * 0.6) + (w_x * 0.5) - 75), 125);
+            button_calculate.Location = new Point((int)((width * 0.6) + (w_x * 0.5) - 75), 80);
 
             // Location of Result of textbox
-            richTextBox_result.Location = new Point((int)(width * 0.6), 180);
-            richTextBox_result.Size = new Size((int)(width * 0.4) - 30, height - 180 - 75);
+            richTextBox_result.Location = new Point((int)(width * 0.6), 140);
+            richTextBox_result.Size = new Size((int)(width * 0.4) - 30, height - 140 - 75);
         }
         #endregion
 
@@ -85,15 +84,15 @@ namespace Section_Modulus_Calculator
                 txt_rd_reader txt_rd = new txt_rd_reader(ow.FileName);
                 txt_to_surface_conversion surf_conv = new txt_to_surface_conversion(txt_rd);
 
-                
+
                 if (surf_conv.all_surface.Count != 0)
                 {
                     // Re-initialize the geometry
                     geom_obj = new geometry_store();
-                    geom_obj.add_geometry(surf_conv.all_surface,surf_conv.all_ellipses);
+                    geom_obj.add_geometry(surf_conv.all_surface, surf_conv.all_ellipses);
                     geom_obj.set_openTK_objects();
 
-                    g_control.update_drawing_scale_and_translation(surf_conv.dr_scale, surf_conv.dr_tx, surf_conv.dr_ty,true);
+                    g_control.update_drawing_scale_and_translation(surf_conv.dr_scale, surf_conv.dr_tx, surf_conv.dr_ty, true);
 
                     richTextBox_result.Clear();
                     richTextBox_result.Text = txt_rd.txt_reader_ouput();
@@ -107,15 +106,11 @@ namespace Section_Modulus_Calculator
             }
         }
 
-        private void button_referenceaxis_Click(object sender, EventArgs e)
-        {
-            // Modify Reference Axis
-            MessageBox.Show("Reference");
-
-        }
-
         private void button_calculate_Click(object sender, EventArgs e)
         {
+            if (geom_obj.is_geometry_set == false)
+                return;
+
             richTextBox_result.Clear();
 
             // Calculate geometric parameters
@@ -133,7 +128,7 @@ namespace Section_Modulus_Calculator
             centroid_x = geom_obj.geometry_x_center;
             centroid_y = geom_obj.geometry_y_center;
 
-            richTextBox_result.Text = richTextBox_result.Text + "Geometric center" + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "Geometric center (minimum x = " + geom_obj.geometry_xmin.ToString("F4") + ", minimum y = " + geom_obj.geometry_ymin.ToString("F4") + ")" + Environment.NewLine;
             richTextBox_result.Text = richTextBox_result.Text + "x centroid = " + centroid_x.ToString("F4") + Environment.NewLine;
             richTextBox_result.Text = richTextBox_result.Text + "y centroid = " + centroid_y.ToString("F4") + Environment.NewLine + Environment.NewLine;
 
@@ -150,6 +145,21 @@ namespace Section_Modulus_Calculator
             richTextBox_result.Text = richTextBox_result.Text + "Ixx = " + moi_x.ToString("F4") + Environment.NewLine;
             richTextBox_result.Text = richTextBox_result.Text + "Iyy = " + moi_y.ToString("F4") + Environment.NewLine;
             richTextBox_result.Text = richTextBox_result.Text + "Ixy = " + moi_xy.ToString("F4") + Environment.NewLine + Environment.NewLine;
+
+            // Step 4 Principal moment of inertia
+            double moi_p1 = 0.0;
+            double moi_p2 = 0.0;
+            double moi_theta = 0.0;
+
+            moi_p1 = geom_obj.geometry_p1_moi;
+            moi_p2 = geom_obj.geometry_p2_moi;
+            moi_theta = geom_obj.geometry_theta_moi;
+
+            richTextBox_result.Text = richTextBox_result.Text + "Principal moments of inertia and direction" + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "I1 = " + moi_p1.ToString("F4") + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "I2 = " + moi_p2.ToString("F4") + Environment.NewLine;
+            richTextBox_result.Text = richTextBox_result.Text + "Theta = " + (moi_theta * (180 / Math.PI)).ToString("F4") + Environment.NewLine + Environment.NewLine;
+
 
             geom_obj.set_openTK_objects();
             glControl_main_panel.Invalidate();
@@ -197,23 +207,23 @@ namespace Section_Modulus_Calculator
             geom_obj.paint_geometry();
 
             // Display the text
-            g_control.set_opengl_shader(3);
+            // g_control.set_opengl_shader(3);
             //Matrix4 projectionM = Matrix4.CreateScale(new Vector3(1f / glControl_main_panel.Width,
             //    1f / glControl_main_panel.Height, 1.0f));
             // Matrix4 projectionM = Matrix4.CreateOrthographicOffCenter(0.0f, glControl_main_panel.Width, glControl_main_panel.Height, 0.0f, -1.0f, 1.0f);
 
-            float a1 = 1f / glControl_main_panel.Width;
-            float a2 = 1f / glControl_main_panel.Height;
+            //float a1 = 1f / glControl_main_panel.Width;
+            //float a2 = 1f / glControl_main_panel.Height;
 
-            Matrix4 projectionM = new Matrix4((2*a1), 0.0f, 0.0f, 0.0f,
-                0.0f, (-2*a2) , 0.0f, 0.0f,
-                0.0f, 0.0f, -1.0f , 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f );
+            //Matrix4 projectionM = new Matrix4((2*a1), 0.0f, 0.0f, 0.0f,
+            //    0.0f, (-2*a2) , 0.0f, 0.0f,
+            //    0.0f, 0.0f, -1.0f , 0.0f,
+            //    0.0f, 0.0f, 0.0f, 1.0f );
 
-            GL.UniformMatrix4(1, false, ref projectionM);
+            // GL.UniformMatrix4(1, false, ref projectionM);
             // GL.Uniform3(2, new Vector3(0.5f, 0.8f, 0.2f));
 
-           // geom_obj.paint_text();
+            // geom_obj.paint_text();
 
             // OpenTK windows are what's known as "double-buffered". In essence, the window manages two buffers.
             // One is rendered to while the other is currently displayed by the window.

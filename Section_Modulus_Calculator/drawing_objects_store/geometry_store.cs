@@ -13,6 +13,10 @@ namespace Section_Modulus_Calculator.drawing_objects_store
 
         public double geometry_cs_area { get; private set; }
 
+        public double geometry_xmin { get; private set; }
+
+        public double geometry_ymin { get; private set; }
+
         public double geometry_x_center { get; private set; }
 
         public double geometry_y_center { get; private set; }
@@ -22,6 +26,12 @@ namespace Section_Modulus_Calculator.drawing_objects_store
         public double geometry_y_moi { get; private set; }
 
         public double geometry_xy_moi { get; private set; }
+
+        public double geometry_p1_moi { get; private set; }
+
+        public double geometry_p2_moi { get; private set; }
+
+        public double geometry_theta_moi { get; private set; }
 
         public HashSet<ellipse_store> all_endpoints { get; private set; }
 
@@ -57,18 +67,31 @@ namespace Section_Modulus_Calculator.drawing_objects_store
             this.geometry_x_moi = 0.0;
             this.geometry_y_moi = 0.0;
             this.geometry_xy_moi = 0.0;
+
+            // principal moment of inertia
+            this.geometry_p1_moi = 0.0;
+            this.geometry_p2_moi = 0.0;
+            this.geometry_theta_moi = 0.0;
         }
 
         public void set_geometric_parameter()
         {
+            // Surface area
             double surf_area = 0.0;
-            //List<double> s_area = new List<double>();
+            // Surface centroid
             double s_x = 0.0;
             double s_y = 0.0;
-
+            // moment of inertia
             double sx_moi = 0.0;
             double sy_moi = 0.0;
             double sxy_moi = 0.0;
+            // principal moment of inertia
+            double p1_moi = 0.0;
+            double p2_moi = 0.0;
+            double theta_moi = 0.0;
+
+            this.geometry_xmin = Double.MaxValue;
+            this.geometry_ymin = Double.MaxValue;
 
             this.is_geometry_calculated = false;
 
@@ -90,6 +113,17 @@ namespace Section_Modulus_Calculator.drawing_objects_store
                     sx_moi = sx_moi + surf.x_area_moment;
                     sy_moi = sy_moi + surf.y_area_moment;
                     sxy_moi = sxy_moi + surf.xy_area_moment;
+
+                    // Principal moment of inertia
+                    p1_moi = p1_moi + surf.area_moment_p1;
+                    p2_moi = p2_moi + surf.area_moment_p2;
+                    //theta_moi = (theta_moi + surf.area_moment_theta)>360? (theta_moi + surf.area_moment_theta)-360:
+                    //    (theta_moi + surf.area_moment_theta);
+                    theta_moi = theta_moi + surf.area_moment_theta;
+
+                    // Geometry store
+                    this.geometry_xmin = this.geometry_xmin > surf.x_min ? surf.x_min : this.geometry_xmin;
+                    this.geometry_ymin = this.geometry_ymin > surf.y_min ? surf.y_min : this.geometry_ymin;
                 }
 
                 // set the geometry center if geometry is available (loaded)
@@ -104,10 +138,13 @@ namespace Section_Modulus_Calculator.drawing_objects_store
                 this.geometry_y_moi = sy_moi;
                 this.geometry_xy_moi = sxy_moi;
 
+                // principal moment of inertia
+                this.geometry_p1_moi = p1_moi;
+                this.geometry_p2_moi = p2_moi;
+                this.geometry_theta_moi = theta_moi;
 
-                geom_centroid = new ellipse_store(1000, this.geometry_x_center, this.geometry_y_center, System.Drawing.Color.Violet, global_variables.gvariables_static.ellipse_size_control * 0.01);
+                geom_centroid = new ellipse_store(1000, this.geometry_x_center, this.geometry_y_center, System.Drawing.Color.DarkGreen, global_variables.gvariables_static.ellipse_size_control * 0.01);
                 this.is_geometry_calculated = true;
-
             }
         }
 

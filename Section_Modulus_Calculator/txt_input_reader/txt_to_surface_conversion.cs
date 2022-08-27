@@ -82,7 +82,7 @@ namespace Section_Modulus_Calculator.txt_input_reader
                 double bound_x = (max_x - min_x);
                 double bound_y = (max_y - min_y);
 
-                this.dr_scale = (float)(1.0d / Math.Abs(Math.Max(bound_x, bound_y)));
+                this.dr_scale = (float)(1.3d / Math.Abs(Math.Max(bound_x, bound_y)));
 
                 // Translation values
                 this.dr_tx = (-0.5f * (float)(max_x + min_x)) * this.dr_scale;
